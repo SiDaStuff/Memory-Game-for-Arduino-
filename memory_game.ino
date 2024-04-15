@@ -2,71 +2,58 @@
 
 #include <Arduino.h>
 
-// Define button pins
 const int buttonRed = 2;
 const int buttonGreen = 3;
 const int buttonBlue = 4;
 const int buttonYellow = 5;
 
-// Define LED pins
 const int ledRed = 6;
 const int ledGreen = 7;
 const int ledBlue = 8;
 const int ledYellow = 9;
 
-// Define array to store the sequence
 int sequence[100];
 int sequenceLength = 0;
 int currentIndex = 0;
 
-// Flag to indicate if it's player's turn to input
 bool playerInput = false;
 
 void setup() {
-  // Initialize button pins as inputs
   pinMode(buttonRed, INPUT_PULLUP);
   pinMode(buttonGreen, INPUT_PULLUP);
   pinMode(buttonBlue, INPUT_PULLUP);
   pinMode(buttonYellow, INPUT_PULLUP);
 
-  // Initialize LED pins as outputs
   pinMode(ledRed, OUTPUT);
   pinMode(ledGreen, OUTPUT);
   pinMode(ledBlue, OUTPUT);
   pinMode(ledYellow, OUTPUT);
 
-  // Generate a random sequence
   addRandomLight();
 }
 
 void loop() {
   if (!playerInput) {
-    // Display sequence to the player
     displaySequence();
-    delay(1000); // Delay between displaying sequence and waiting for user input
+    delay(1000); 
     playerInput = true;
   } else {
     // Player input
     if (checkInput()) {
-      // Player successfully mimics the sequence
       if (currentIndex == sequenceLength) {
-        // If the entire sequence is matched
-        addRandomLight(); // Add a new random light to the sequence
-        playerInput = false; // Switch back to displaying sequence
-        currentIndex = 0; // Reset currentIndex for the new sequence
+        addRandomLight(); 
+        playerInput = false; 
+        currentIndex = 0; 
       }
     } else {
-      // Player made a mistake
-      // Game over
       gameOver();
     }
   }
 }
 
 void generateSequence() {
-  // Generate random sequence
   for (int i = 0; i < sizeof(sequence) / sizeof(sequence[0]); i++) {
-    sequence[i] = random(4); // Random number between 0 and 3
+    sequence[i] = random(4); 
   }
   sequenceLength = 1;
 }
@@ -99,41 +86,38 @@ void displaySequence() {
         delay(200);
         break;
     }
-    delay(100); // Pause between lights
+    delay(100); 
   }
 }
 
 bool checkInput() {
   if (digitalRead(buttonRed) == LOW && sequence[currentIndex] == 0) {
     currentIndex++;
-    delay(200); // Debounce delay
+    delay(200); 
     return true;
   } else if (digitalRead(buttonGreen) == LOW && sequence[currentIndex] == 1) {
     currentIndex++;
-    delay(200); // Debounce delay
+    delay(200); 
     return true;
   } else if (digitalRead(buttonBlue) == LOW && sequence[currentIndex] == 2) {
     currentIndex++;
-    delay(200); // Debounce delay
+    delay(200); 
     return true;
   } else if (digitalRead(buttonYellow) == LOW && sequence[currentIndex] == 3) {
     currentIndex++;
-    delay(200); // Debounce delay
+    delay(200); 
     return true;
   }
   
-  return false; // If any wrong button is pressed
+  return false; 
 }
 
 void addRandomLight() {
-  sequence[sequenceLength] = random(4); // Random number between 0 and 3
+  sequence[sequenceLength] = random(4); 
   sequenceLength++;
 }
 
 void gameOver() {
-  // Game over logic
-  // Reset the game or display final score
-  // For now, let's just blink all LEDs to indicate game over
   for (int i = 0; i < 5; i++) {
     digitalWrite(ledRed, HIGH);
     digitalWrite(ledGreen, HIGH);
@@ -146,7 +130,6 @@ void gameOver() {
     digitalWrite(ledYellow, LOW);
     delay(500);
   }
-  // Reset sequence and start over
   sequenceLength = 0;
   currentIndex = 0;
   playerInput = false;
